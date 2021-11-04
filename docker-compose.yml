@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    depends_on:
+      - project_php
+      - project_mysql
+    networks:
+      default:
+        aliases:
+          - project.test
+    ports:
+      - "80:80"
+      - "81:81"
+    volumes:
+      - ./domains/project:/var/www/project
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+
+  project_php:
+    build:
+      context: .
+      dockerfile: php
+    container_name: project_php
+    environment:
+      SERVICE_NAME: project_php
+      SERVICE_TAGS: dev
+    volumes:
+      - ./domains/project:/var/www/project
+      - ./config:/var/www/.config # tinker config access
+      - ./php.ini:/usr/local/etc/php/conf.d/local.ini
+    ports:
+      - "9030:9000"
+    restart: unless-stopped
+    tty: true
+    
+  project_mysql:
+    image: mysql:8.0.25
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3340:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+      - ./dump_files:/mysql_dump_files
+    environment:
+      MYSQL_DATABASE: homestead
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+
