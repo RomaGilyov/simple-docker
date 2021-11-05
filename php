@@ -1,7 +1,7 @@
 FROM php:7.4-fpm
 
 # Set working directory
-WORKDIR /var/www/project
+WORKDIR /var/www
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
