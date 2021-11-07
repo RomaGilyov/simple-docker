@@ -1,7 +1,7 @@
 FROM php:7.4-fpm
 
 # Set working directory
-WORKDIR /var/www/symfony_4_test
+WORKDIR /var/www/symfony_4
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
